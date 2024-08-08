@@ -11,11 +11,52 @@ exports.createMachine = async (req, res) => {
     }
 };
 
-// Get all machines
+// Get all machines with pagination
 exports.getMachines = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     try {
-        const machines = await Machine.findAll();
-        res.status(200).json(machines);
+        const { count, rows } = await Machine.findAndCountAll({
+            limit,
+            offset
+        });
+
+        const totalPages = Math.ceil(count / limit);
+        const baseUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}/machines`;
+
+        res.status(200).json({
+            current_page: page,
+            data: rows,
+            first_page_url: `${baseUrl}?page=1`,
+            from: offset + 1,
+            last_page: totalPages,
+            last_page_url: `${baseUrl}?page=${totalPages}`,
+            links: [
+                {
+                    url: page > 1 ? `${baseUrl}?page=${page - 1}` : null,
+                    label: "&laquo; Previous",
+                    active: false
+                },
+                ...Array.from({ length: totalPages }, (_, i) => ({
+                    url: `${baseUrl}?page=${i + 1}`,
+                    label: `${i + 1}`,
+                    active: i + 1 === page
+                })),
+                {
+                    url: page < totalPages ? `${baseUrl}?page=${page + 1}` : null,
+                    label: "Next &raquo;",
+                    active: false
+                }
+            ],
+            next_page_url: page < totalPages ? `${baseUrl}?page=${page + 1}` : null,
+            path: baseUrl,
+            per_page: limit,
+            prev_page_url: page > 1 ? `${baseUrl}?page=${page - 1}` : null,
+            to: offset + rows.length,
+            total: count
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
