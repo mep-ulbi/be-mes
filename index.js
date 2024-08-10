@@ -11,6 +11,7 @@ connectDB();
 const authRoutes = require('./src/routes/authRoutes');
 const productionRoutes = require('./src/routes/productionRoutes');
 const machineRoutes = require('./src/routes/machineRoutes');
+const operationRoutes = require('./src/routes/productionOperationRoutes');
 
 
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api', productionRoutes);
 app.use('/api', machineRoutes);
+app.use('/api', operationRoutes);
 
 
 swaggerConfig(app);

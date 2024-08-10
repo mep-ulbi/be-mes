@@ -27,6 +27,7 @@ const Production = sequelize.define('Production', {
         type: DataTypes.TEXT,
         allowNull: true,
     },
+    
 }, {
     tableName: 'productions',
     timestamps: true,
