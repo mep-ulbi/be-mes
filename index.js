@@ -15,6 +15,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const productionRoutes = require('./src/routes/productionRoutes');
 const machineRoutes = require('./src/routes/machineRoutes');
 const operationRoutes = require('./src/routes/productionOperationRoutes');
+const machineOperationsRoutes = require('./src/routes/machineOperationRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 
 
@@ -26,6 +27,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api', productionRoutes);
 app.use('/api', machineRoutes);
 app.use('/api/operations', operationRoutes);
+app.use('/api/machine-operations', machineOperationsRoutes);
 app.use('/api', userRoutes);
 
 

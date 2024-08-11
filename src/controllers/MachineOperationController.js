@@ -1,12 +1,12 @@
-const ProductionOperation = require('../models/productionOperationModel');
+const MachineOperation = require('../models/MachineOperationModel');
 
 exports.startOperation = async (req, res) => {
   try {
-    const { operator_name, bagian, production_id } = req.body;
-    const operation = await ProductionOperation.create({
+    const { operator_name, bagian, machine_id } = req.body;
+    const operation = await MachineOperation.create({
       operator_name,
       bagian,
-      production_id,
+      machine_id,
       start_time: new Date(),
       status: 'active'
     });
@@ -19,7 +19,7 @@ exports.startOperation = async (req, res) => {
 exports.holdOperation = async (req, res) => {
   const { id } = req.params;
   try {
-    const operation = await ProductionOperation.findByPk(id);
+    const operation = await MachineOperation.findByPk(id);
     if (!operation) return res.status(404).send('Operation not found');
 
     await operation.update({
@@ -35,7 +35,7 @@ exports.holdOperation = async (req, res) => {
 exports.resumeOperation = async (req, res) => {
   const { id } = req.params;
   try {
-    const operation = await ProductionOperation.findByPk(id);
+    const operation = await MachineOperation.findByPk(id);
     if (!operation) return res.status(404).send('Operation not found');
 
     await operation.update({
@@ -51,7 +51,7 @@ exports.resumeOperation = async (req, res) => {
 exports.endOperation = async (req, res) => {
   const { id } = req.params;
   try {
-    const operation = await ProductionOperation.findByPk(id);
+    const operation = await MachineOperation.findByPk(id);
     if (!operation) return res.status(404).send('Operation not found');
 
     await operation.update({

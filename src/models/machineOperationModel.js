@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
-const Production = require('./productionModel');
+const Machine = require('./machineModel');
 
-const ProductionOperation = sequelize.define('ProductionOperation', {
+const MachineOperation = sequelize.define('MachineOperation', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -16,11 +16,11 @@ const ProductionOperation = sequelize.define('ProductionOperation', {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    production_id: {
+    machine_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Production,
+            model: Machine,
             key: 'id'
         },
     },
@@ -37,10 +37,10 @@ const ProductionOperation = sequelize.define('ProductionOperation', {
         allowNull: true,
     }
 }, {
-    tableName: 'production_operations',
+    tableName: 'machine_operations',
     timestamps: true,
 });
 
-ProductionOperation.belongsTo(Production, { foreignKey: 'production_id' });
+MachineOperation.belongsTo(Machine, { foreignKey: 'machine_id' });
 
-module.exports = ProductionOperation;
+module.exports = MachineOperation;
