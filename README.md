@@ -1,51 +1,57 @@
+# MES-Production
+
+## Gambaran Umum
+
+MES-Production adalah Sistem Eksekusi Manufaktur (MES) yang dirancang untuk mengelola dan melacak proses produksi dalam lingkungan manufaktur. Sistem ini mencakup peran seperti Production Engineering, Production Operation, PPIC, dan Manager, dengan tanggung jawab masing-masing. Aplikasi ini menangani tugas-tugas seperti input data, manajemen proses, pelacakan waktu, unggah file, dan pembuatan laporan.
+
+## Daftar Isi
+
+- [Struktur Proyek](#struktur-proyek)
+- [Instalasi](#instalasi)
+- [Variabel Lingkungan](#variabel-lingkungan)
+- [Menjalankan Aplikasi](#menjalankan-aplikasi)
+- [Gambaran Alur Kerja](#gambaran-alur-kerja)
+- [Rute API](#rute-api)
+- [Middleware](#middleware)
+- [Utilitas](#utilitas)
+- [Lisensi](#lisensi)
+
+## Struktur Proyek
+
+```plaintext
 MES-Production/
 ├── config/
-│ └── db.js
+│   └── db.js                      # Konfigurasi database
 ├── controllers/
-│ ├── authController.js
-│ ├── productionController.js
-│ ├── machineController.js
-│ ├── ppicController.js
-│ └── managerController.js
+│   ├── authController.js          # Logika autentikasi dan otorisasi
+│   ├── productionController.js    # Mengelola operasi terkait produksi
+│   ├── machineController.js       # Mengelola data terkait mesin
+│   ├── ppicController.js          # Mengelola operasi PPIC
+│   └── managerController.js       # Mengelola operasi untuk manajer
 ├── models/
-│ ├── userModel.js
-│ ├── productionModel.js
-│ ├── machineModel.js
-│ └── resultModel.js
+│   ├── userModel.js               # Skema dan model pengguna
+│   ├── productionModel.js         # Skema dan model produksi
+│   ├── machineModel.js            # Skema dan model mesin
+│   └── resultModel.js             # Skema dan model hasil
 ├── routes/
-│ ├── authRoutes.js
-│ ├── productionRoutes.js
-│ ├── machineRoutes.js
-│ ├── ppicRoutes.js
-│ └── managerRoutes.js
+│   ├── authRoutes.js              # Rute untuk autentikasi
+│   ├── productionRoutes.js        # Rute untuk manajemen produksi
+│   ├── machineRoutes.js           # Rute untuk manajemen mesin
+│   ├── ppicRoutes.js              # Rute untuk operasi PPIC
+│   └── managerRoutes.js           # Rute untuk operasi manajer
 ├── middlewares/
-│ ├── authMiddleware.js
-│ └── errorMiddleware.js
+│   ├── authMiddleware.js          # Middleware untuk autentikasi
+│   └── errorMiddleware.js         # Middleware untuk penanganan error
 ├── utils/
-│ ├── fileUpload.js
-│ ├── timeHelper.js
-│ └── reportGenerator.js
+│   ├── fileUpload.js              # Utilitas untuk unggah file
+│   ├── timeHelper.js              # Utilitas untuk pelacakan waktu
+│   └── reportGenerator.js         # Utilitas untuk pembuatan laporan
 ├── public/
-│ └── uploads/
+│   └── uploads/                   # Direktori untuk file yang diunggah
 ├── views/
-│ └── index.html
-├── .env
-├── .gitignore
-├── package.json
-├── server.js
-└── README.md
-
-alur
-graph TD
-A[Login/Register] --> B[Production Engineering]
-B --> |Input Data Produksi dan Mesin| C[Database]
-C --> D[Production Operation]
-D --> |Pilih Proses Produksi dan Mesin| E
-E --> |Mulai Proses dengan Start| F[Timer]
-F --> |Stop Timer dan Catat Durasi| G
-G --> |Hasil Durasi Dicatat| H[Database]
-H --> I[PPIC]
-I --> |Catat Hasil dan Upload File| J[Database]
-J --> K[Manager]
-K --> |Lihat Report dan Grafik| L[Dashboard]
-K --> |Kelola Data User| M[Database]
+│   └── index.html                 # Entry point untuk frontend (jika ada)
+├── .env                           # Variabel lingkungan
+├── .gitignore                     # File git ignore
+├── package.json                   # Konfigurasi proyek Node.js
+├── server.js                      # File server utama
+└── README.md                      # File README ini
