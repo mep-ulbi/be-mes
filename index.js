@@ -1,11 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const { errorHandler } = require('./src/middleware/errorHandler');
 const { connectDB } = require('./src/config/db');
 const swaggerConfig = require('./src/config/swagger');
 
 const app = express();
 connectDB();
+
+app.use(cors());
 
 //import routes 
 const authRoutes = require('./src/routes/authRoutes');
@@ -22,7 +25,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api', productionRoutes);
 app.use('/api', machineRoutes);
-app.use('/api', operationRoutes);
+app.use('/api/operations', operationRoutes);
 app.use('/api', userRoutes);
 
 

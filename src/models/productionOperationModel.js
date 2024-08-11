@@ -23,7 +23,7 @@ const ProductionOperation = sequelize.define('ProductionOperation', {
             model: Production,
             key: 'id'
         },
-        allowNull: false,
+        allowNull: true, 
     },
     machine_id: {
         type: DataTypes.INTEGER,
@@ -31,7 +31,7 @@ const ProductionOperation = sequelize.define('ProductionOperation', {
             model: Machine,
             key: 'id'
         },
-        allowNull: false,
+        allowNull: true,  
     },
     start_time: {
         type: DataTypes.DATE,

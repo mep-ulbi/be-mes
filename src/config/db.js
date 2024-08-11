@@ -11,7 +11,7 @@ const connectDB = async () => {
   try {
     await sequelize.authenticate();
     console.log('Database Konek.');
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false });
     console.log('Database synchronized.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
