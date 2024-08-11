@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -7,6 +8,8 @@ const swaggerConfig = require('./src/config/swagger');
 
 const app = express();
 connectDB();
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(cors());
 

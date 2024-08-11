@@ -15,18 +15,11 @@ const Production = sequelize.define('Production', {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    tahapan_proses: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-    },
-    nama_proses_modul: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-    },
-    detail_proses: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
+    filePath: {
+        type: DataTypes.STRING,
+        allowNull: true  
+    }
+   
     
 }, {
     tableName: 'productions',
