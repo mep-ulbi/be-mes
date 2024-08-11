@@ -54,6 +54,21 @@ exports.getUsers = async (req, res) => {
     }
 };
 
+exports.getUserById = async (req, res) => {
+    const userId = req.params.id; 
+    try {
+        const user = await User.findByPk(userId, {
+            include: [{ model: Role, as: 'role' }] 
+        });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
 // Update User
 exports.updateUser = async (req, res) => {
     const { name, email, password, role_id } = req.body;

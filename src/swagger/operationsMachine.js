@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /api/machineoperations/start:
+ * /api/machine-operations/start:
  *   post:
  *     summary: Start a machine operation
  *     tags: [MachineOperations]
@@ -37,7 +37,7 @@
 
 /**
  * @swagger
- * /api/machineoperations/{id}/hold:
+ * /api/machine-operations/{id}/hold:
  *   patch:
  *     summary: Hold a machine operation
  *     tags: [MachineOperations]
@@ -58,7 +58,7 @@
 
 /**
  * @swagger
- * /api/machineoperations/{id}/resume:
+ * /api/machine-operations/{id}/resume:
  *   patch:
  *     summary: Resume a machine operation
  *     tags: [MachineOperations]
@@ -79,7 +79,7 @@
 
 /**
  * @swagger
- * /api/machineoperations/{id}/end:
+ * /api/machine-operations/{id}/end:
  *   patch:
  *     summary: End a machine operation
  *     tags: [MachineOperations]
