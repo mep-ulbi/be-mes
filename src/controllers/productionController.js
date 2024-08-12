@@ -4,6 +4,8 @@ const { sequelize } = require('../config/db');
 const upload = require('../config/multerConfig');
 const fs = require('fs').promises;
 const path = require('path');
+const moment = require('moment');
+
 
 const predefinedSteps = [
     { step_name: 'Internal Order / Review Order', department: 'PPC Warehouse', lead_time: null, description: '' },
@@ -46,7 +48,11 @@ exports.createProduction = (req, res) => {
                     step_name: step.step_name,
                     department: step.department,
                     lead_time: step.lead_time,
-                    description: step.description
+                    description: step.description,
+                    start_time: null,
+                    end_time: null,
+                    hold_time: null,
+                    resume_time: null
                 }, { transaction: t });
             }
 
@@ -330,6 +336,237 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
         res.status(500).json({
             statusCode: 500,
             message: 'An error occurred while retrieving the production step.',
+            data: [],
+            error: err.message
+        });
+    }
+};
+
+
+
+// Start a production step
+exports.startStep = async (req, res) => {
+  const { productionId, stepId } = req.params;
+  console.log(productionId, stepId);
+  try {
+    const numericProductionId = parseInt(productionId, 10);
+    const numericStepId = parseInt(stepId, 10);
+
+    if (isNaN(numericProductionId) || isNaN(numericStepId)) {
+        return res.status(400).json({
+            statusCode: 400,
+            message: 'Invalid production ID or step ID. Both must be numbers.',
+            data: []
+        });
+    }
+    const step = await ProductionStep.findOne({ where: { id: numericStepId, productionId: numericProductionId } });
+    if (!step) {
+          return res.status(404).json({
+              statusCode: 404,
+              message: 'Production step not found.',
+              data: []
+          });
+      }
+      
+      if (step.start_time) {
+          return res.status(400).json({
+              statusCode: 400,
+              message: 'Step already started.',
+              data: []
+          });
+      }
+      
+      step.start_time = new Date();
+      await step.save();
+      
+      res.status(200).json({
+          statusCode: 200,
+          message: 'Production step started.',
+          data: step
+      });
+  } catch (err) {
+      res.status(500).json({
+          statusCode: 500,
+          message: 'An error occurred while starting the step.',
+          data: [],
+          error: err.message
+      });
+  }
+};
+
+// Hold a production step
+exports.holdStep = async (req, res) => {
+    const { productionId, stepId } = req.params;
+    try {
+        const step = await ProductionStep.findOne({ where: { id: stepId, productionId } });
+        if (!step) {
+            return res.status(404).json({
+                statusCode: 404,
+                message: 'Production step not found.',
+                data: []
+            });
+        }
+        
+        if (!step.start_time || step.end_time) {
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Step is not in progress or already completed.',
+                data: []
+            });
+        }
+        
+        step.hold_time = new Date();
+        await step.save();
+        
+        res.status(200).json({
+            statusCode: 200,
+            message: 'Production step held.',
+            data: step
+        });
+    } catch (err) {
+        res.status(500).json({
+            statusCode: 500,
+            message: 'An error occurred while holding the step.',
+            data: [],
+            error: err.message
+        });
+    }
+};
+
+// Continue a production step
+exports.continueStep = async (req, res) => {
+    const { productionId, stepId } = req.params;
+    try {
+        const step = await ProductionStep.findOne({ where: { id: stepId, productionId } });
+        if (!step) {
+            return res.status(404).json({
+                statusCode: 404,
+                message: 'Production step not found.',
+                data: []
+            });
+        }
+        
+        if (!step.hold_time) {
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Step is not on hold.',
+                data: []
+            });
+        }
+        
+        step.resume_time = new Date();
+        await step.save();
+        
+        res.status(200).json({
+            statusCode: 200,
+            message: 'Production step resumed.',
+            data: step
+        });
+    } catch (err) {
+        res.status(500).json({
+            statusCode: 500,
+            message: 'An error occurred while resuming the step.',
+            data: [],
+            error: err.message
+        });
+    }
+};
+
+// End a production step
+exports.endStep = async (req, res) => {
+    const { productionId, stepId } = req.params;
+    try {
+        const step = await ProductionStep.findOne({ where: { id: stepId, productionId } });
+        if (!step) {
+            return res.status(404).json({
+                statusCode: 404,
+                message: 'Production step not found.',
+                data: []
+            });
+        }
+        
+        if (step.end_time) {
+            return res.status(400).json({
+                statusCode: 400,
+                message: 'Step already ended.',
+                data: []
+            });
+        }
+
+        step.end_time = new Date();
+
+        let leadTime = moment(step.end_time).diff(moment(step.start_time), 'hours', true);
+        
+        if (step.hold_time && step.resume_time) {
+            leadTime -= moment(step.resume_time).diff(moment(step.hold_time), 'hours', true);
+        }
+
+        step.lead_time = leadTime.toFixed(2);
+        await step.save();
+        
+        res.status(200).json({
+            statusCode: 200,
+            message: 'Production step ended and lead time calculated.',
+            data: step
+        });
+    } catch (err) {
+        res.status(500).json({
+            statusCode: 500,
+            message: 'An error occurred while ending the step.',
+            data: [],
+            error: err.message
+        });
+    }
+};
+
+exports.calculateTotalLeadTime = async (req, res) => {
+    const { productionId } = req.params;
+
+    try {
+        // Fetch all steps related to the productionId
+        const steps = await ProductionStep.findAll({
+            where: { productionId },
+            attributes: ['lead_time', 'step_name'],            
+            order: [['id', 'ASC']] // Order by id or any other relevant column
+        });
+
+        if (!steps || steps.length === 0) {
+            return res.status(404).json({
+                statusCode: 404,
+                message: `No production steps found for production ID ${productionId}.`,
+                data: []
+            });
+        }
+        const totalLeadTimeSoFar = steps.reduce((sum, step) => sum + (step.lead_time ? parseFloat(step.lead_time) : 0), 0);
+
+        const uncompletedSteps = steps.filter(step => step.lead_time === null);
+        if (uncompletedSteps.length > 0) {
+            const uncompletedStepNames = uncompletedSteps.map(step => step.step_name).join(', ');
+            return res.status(200).json({
+                statusCode: 200,
+                message: `Some steps have not been completed: ${uncompletedStepNames}`,
+                data: {
+                    totalLeadTime: totalLeadTimeSoFar.toFixed(2) + ' Hari',
+                    uncompletedSteps: uncompletedSteps.map(step => ({
+                        step_name: step.step_name,
+                        lead_time: step.lead_time
+                    }))
+                }
+            });
+        }
+        // Sum the lead_time values
+        const totalLeadTime = steps.reduce((sum, step) => sum + parseFloat(step.lead_time), 0);
+
+        
+        res.status(200).json({
+            statusCode: 200,
+            message: 'Total lead time calculated successfully.',
+            data: { totalLeadTime: totalLeadTime.toFixed(2) + ' Hari' }
+        });
+    } catch (err) {
+        res.status(500).json({
+            statusCode: 500,
+            message: 'An error occurred while calculating the total lead time.',
             data: [],
             error: err.message
         });

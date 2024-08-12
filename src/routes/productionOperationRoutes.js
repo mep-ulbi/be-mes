@@ -2,17 +2,21 @@
 const express = require('express');
 const router = express.Router();
 const {
-  startOperation,
-  holdOperation,
-  resumeOperation,
-  endOperation
-} = require('../controllers/productionOperationController');
+
+    startStep,
+    holdStep,
+    continueStep,
+    endStep,
+    calculateTotalLeadTime
+} = require('../controllers/productionController');
 const verifyToken = require('../middleware/auth');
 
+router.put('/productions/:productionId/steps/:stepId/start', verifyToken, startStep);
+router.put('/productions/:productionId/steps/:stepId/hold', verifyToken, holdStep);
+router.put('/productions/:productionId/steps/:stepId/continue', verifyToken, continueStep);
+router.put('/productions/:productionId/steps/:stepId/end', verifyToken, endStep);
+router.get('/productions/:productionId/total-lead-time', verifyToken, calculateTotalLeadTime);
 
-router.post('/start', verifyToken,startOperation);
-router.patch('/:id/hold', verifyToken,holdOperation);
-router.patch('/:id/resume', verifyToken,resumeOperation);
-router.patch('/:id/end', verifyToken,endOperation);
+
 
 module.exports = router;
