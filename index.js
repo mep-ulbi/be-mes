@@ -30,7 +30,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api', productionRoutes);
 app.use('/api', machineRoutes);
 app.use('/api/operations', operationRoutes);
-app.use('/api/machine-operations', machineOperationsRoutes);
 app.use('/api', userRoutes);
 
 

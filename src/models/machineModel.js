@@ -15,6 +15,11 @@ const Machine = sequelize.define('Machine', {
         type: DataTypes.STRING(255),
         allowNull: false,
     },
+    filePath: {
+        type: DataTypes.STRING,
+        allowNull: true  
+    }
+    
 }, {
     tableName: 'machines',
     timestamps: true,

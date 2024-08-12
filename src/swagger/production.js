@@ -168,6 +168,7 @@
  *       500:
  *         description: Some server error
  */
+
 /**
  * @swagger
  * /api/productions/{id}:
