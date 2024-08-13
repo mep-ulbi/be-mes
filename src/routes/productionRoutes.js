@@ -11,7 +11,7 @@ router.put('/productions/:id', verifyToken,updateProduction);
 router.delete('/productions/:id',verifyToken, deleteProduction);
 
 router.get('/productions/steps/:productionId',verifyToken,getProductionStepsByProductionId);
-router.get('/productions/:productionId/steps/:stepId',verifyToken,getProductionStepByIdAndProductionId);
+router.get('/productions/:productionId/steps/:stepId',verifyToken ,getProductionStepByIdAndProductionId);
 
 module.exports = router;
 

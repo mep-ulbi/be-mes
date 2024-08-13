@@ -295,7 +295,6 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
     try {
         console.log(`Received productionId: ${productionId}, id: ${id}`);
 
-        // Convert productionId and id to numbers explicitly
         const numericProductionId = parseInt(productionId, 10);
         const numericId = parseInt(id, 10);
 
@@ -310,7 +309,6 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
             });
         }
 
-        // Find the production step by productionId and id
         const step = await ProductionStep.findOne({
             where: {
                 productionId: numericProductionId,

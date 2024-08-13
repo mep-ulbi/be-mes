@@ -433,12 +433,19 @@
  *         lead_time: 2.0
  *         description: "Review and order materials"
  *         productionId: 10
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *
  * /api/productions/{productionId}/steps/{stepId}:
  *   get:
  *     summary: Get a specific production step by its ID and production ID
  *     tags: [ProductionSteps]
  *     description: Retrieve a specific production step based on the provided production ID and step ID.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: productionId
@@ -521,3 +528,4 @@
  *                   type: string
  *                   example: "Detailed error message"
  */
+

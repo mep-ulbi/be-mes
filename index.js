@@ -20,6 +20,8 @@ const machineRoutes = require('./src/routes/machineRoutes');
 const operationRoutes = require('./src/routes/productionOperationRoutes');
 const machineOperationsRoutes = require('./src/routes/machineOperationRoutes');
 const userRoutes = require('./src/routes/userRoutes');
+const productModuleRoutes = require('./src/routes/productModuleRoutes');
+const productDetailRoutes = require('./src/routes/processDetailRoutes');
 
 
 
@@ -31,6 +33,8 @@ app.use('/api', productionRoutes);
 app.use('/api', machineRoutes);
 app.use('/api/operations', operationRoutes);
 app.use('/api', userRoutes);
+app.use('/api', productModuleRoutes);
+app.use('/api', productDetailRoutes);
 
 
 swaggerConfig(app);
