@@ -18,6 +18,10 @@ const Production = sequelize.define('Production', {
     filePath: {
         type: DataTypes.STRING,
         allowNull: true  
+    },
+    createdBy: { 
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
    
     

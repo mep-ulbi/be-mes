@@ -838,3 +838,111 @@
  *                   type: string
  *                   example: "Detailed error message"
  */
+
+/**
+ * @swagger
+ * /api/machines/user/{userId}:
+ *   get:
+ *     summary: Get all machines created by a specific user
+ *     tags: [Machines]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the user who created the machines
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: The number of items per page
+ *     responses:
+ *       200:
+ *         description: List of machines created by the user retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 current_page:
+ *                   type: integer
+ *                   example: 1
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Machine'
+ *                 first_page_url:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/machines/user/1?page=1"
+ *                 from:
+ *                   type: integer
+ *                   example: 1
+ *                 last_page:
+ *                   type: integer
+ *                   example: 5
+ *                 last_page_url:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/machines/user/1?page=5"
+ *                 links:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       url:
+ *                         type: string
+ *                         example: "http://localhost:5000/api/machines/user/1?page=2"
+ *                       label:
+ *                         type: string
+ *                         example: "2"
+ *                       active:
+ *                         type: boolean
+ *                         example: false
+ *                 next_page_url:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/machines/user/1?page=2"
+ *                 path:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/machines/user/1"
+ *                 per_page:
+ *                   type: integer
+ *                   example: 10
+ *                 prev_page_url:
+ *                   type: string
+ *                   example: null
+ *                 to:
+ *                   type: integer
+ *                   example: 10
+ *                 total:
+ *                   type: integer
+ *                   example: 50
+ *       404:
+ *         description: No machines found for the given user ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No machines found for the given user ID."
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "An error occurred while retrieving the machines."
+ */

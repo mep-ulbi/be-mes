@@ -5,6 +5,7 @@ const {
     getMachineById, 
     updateMachine, 
     deleteMachine, 
+    getMachinesByUser,
     getMachineStepsByMachineId,
     getMachineStepByIdAndMachineId,
     startStep,
@@ -22,6 +23,7 @@ router.get('/machines', verifyToken, getMachines);
 router.get('/machines/:id', verifyToken, getMachineById);
 router.put('/machines/:id', verifyToken, updateMachine);
 router.delete('/machines/:id', verifyToken, deleteMachine);
+router.get('/machines/user/:userId', verifyToken, getMachinesByUser);
 
 // Machine Steps Routes
 router.get('/machines/steps/:machineId', verifyToken, getMachineStepsByMachineId);

@@ -18,6 +18,10 @@ const Machine = sequelize.define('Machine', {
     filePath: {
         type: DataTypes.STRING,
         allowNull: true  
+    },
+    createdBy: { 
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
     
 }, {
