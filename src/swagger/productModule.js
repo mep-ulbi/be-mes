@@ -42,6 +42,7 @@
  *             required:
  *               - productionId
  *               - nama_modul
+ *               - faktor_x
  *             properties:
  *               productionId:
  *                 type: integer
@@ -52,6 +53,7 @@
  *             example:
  *               productionId: 101
  *               nama_modul: "Modul A"
+ *               factor_x: 1  
  *     responses:
  *       201:
  *         description: Module created successfully
@@ -325,3 +327,112 @@
  *                   type: string
  *                   example: "Failed to delete module due to server error."
  */
+
+/**
+ * @swagger
+ * /api/modules/production/{productionId}:
+ *   get:
+ *     summary: Get modules by production ID with pagination
+ *     tags: [ProductModules]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productionId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the production to retrieve modules for
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: The page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         required: false
+ *         description: The number of items per page
+ *     responses:
+ *       200:
+ *         description: List of modules retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 current_page:
+ *                   type: integer
+ *                   example: 1
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ProductModule'
+ *                 first_page_url:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/modules/production/1?page=1"
+ *                 from:
+ *                   type: integer
+ *                   example: 1
+ *                 last_page:
+ *                   type: integer
+ *                   example: 5
+ *                 last_page_url:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/modules/production/1?page=5"
+ *                 links:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       url:
+ *                         type: string
+ *                         example: "http://localhost:5000/api/modules/production/1?page=2"
+ *                       label:
+ *                         type: string
+ *                         example: "2"
+ *                       active:
+ *                         type: boolean
+ *                         example: false
+ *                 next_page_url:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/modules/production/1?page=2"
+ *                 path:
+ *                   type: string
+ *                   example: "http://localhost:5000/api/modules/production/1"
+ *                 per_page:
+ *                   type: integer
+ *                   example: 10
+ *                 prev_page_url:
+ *                   type: string
+ *                   example: null
+ *                 to:
+ *                   type: integer
+ *                   example: 10
+ *                 total:
+ *                   type: integer
+ *                   example: 50
+ *       404:
+ *         description: No modules found for the given production ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No modules found for the given production ID."
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "An error occurred while retrieving the modules."
+ */
+
