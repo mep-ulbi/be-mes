@@ -58,6 +58,8 @@ exports.createProduction = (req, res) => {
 
             await t.commit();
             res.status(201).json({
+                response_code: 201,
+                data: production,
                 message: "Production and steps created successfully",
                 productionId: production.id,
                 filePath: req.file ? req.file.path : "No file uploaded"
