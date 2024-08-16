@@ -627,4 +627,97 @@
  *                   example: "An error occurred while retrieving the productions."
  */
 
-
+/**
+ * @swagger
+ * /productions-summary:
+ *   get:
+ *     summary: Retrieve a summary of all productions with calculated lead times and process details
+ *     tags: 
+ *       - Productions
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Productions data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       productionId:
+ *                         type: integer
+ *                         description: The ID of the production
+ *                         example: 1
+ *                       kode_produk:
+ *                         type: string
+ *                         description: The product code of the production
+ *                         example: "PROD001"
+ *                       total_lead_time:
+ *                         type: number
+ *                         format: float
+ *                         description: The total lead time for the production
+ *                         example: 10.5
+ *                       dok_production_lead_time:
+ *                         type: string
+ *                         description: Document production lead time (currently empty)
+ *                         example: ""
+ *                       pic_ppc:
+ *                         type: string
+ *                         description: The PIC PPC for the production (currently null)
+ *                         example: null
+ *                       keterangan:
+ *                         type: string
+ *                         description: Notes or additional information
+ *                         example: ""
+ *                       assy_mh:
+ *                         type: number
+ *                         format: float
+ *                         description: Calculated value for ASSY MH
+ *                         example: 2.5
+ *                       assy_mch:
+ *                         type: number
+ *                         format: float
+ *                         description: Calculated value for ASSY MCH
+ *                         example: 1.5
+ *                       testing_mh:
+ *                         type: number
+ *                         format: float
+ *                         description: Calculated value for TESTING MH
+ *                         example: 1.8
+ *                       testing_mch:
+ *                         type: number
+ *                         format: float
+ *                         description: Calculated value for TESTING MCH
+ *                         example: 0.9
+ *                 message:
+ *                   type: string
+ *                   example: "Productions data retrieved successfully"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       500:
+ *         description: An error occurred while retrieving productions data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "An error occurred while retrieving productions data"
+ *                 details:
+ *                   type: string
+ *                   example: "Error details"
+ */
