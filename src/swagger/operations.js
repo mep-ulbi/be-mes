@@ -19,6 +19,16 @@
  *           type: integer
  *         required: true
  *         description: The ID of the production step
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *                 example: "Starting the initial phase of production"
  *     responses:
  *       200:
  *         description: Production step started
@@ -84,6 +94,7 @@
  *                   example: "Detailed error message"
  */
 
+
 /**
  * @swagger
  * /api/operations/productions/{productionId}/steps/{stepId}/hold:
@@ -105,6 +116,16 @@
  *           type: integer
  *         required: true
  *         description: The ID of the production step
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *                 example: "Starting the initial phase of production"
  *     responses:
  *       200:
  *         description: Production step held
@@ -191,6 +212,16 @@
  *           type: integer
  *         required: true
  *         description: The ID of the production step
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *                 example: "Starting the initial phase of production"
  *     responses:
  *       200:
  *         description: Production step resumed
@@ -277,6 +308,16 @@
  *           type: integer
  *         required: true
  *         description: The ID of the production step
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *                 example: "Starting the initial phase of production"
  *     responses:
  *       200:
  *         description: Production step ended and lead time calculated

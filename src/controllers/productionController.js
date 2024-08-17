@@ -384,7 +384,8 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
         res.status(200).json({
             statusCode: 200,
             message: 'Production step retrieved successfully.',
-            data: step
+            data: step,
+
         });
     } catch (err) {
         console.error('Error occurred:', err);
@@ -402,7 +403,8 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
 // Start a production step
 exports.startStep = async (req, res) => {
   const { productionId, stepId } = req.params;
-  console.log(productionId, stepId);
+  const { description } = req.body;
+  console.log(productionId, stepId, description);
   try {
     const numericProductionId = parseInt(productionId, 10);
     const numericStepId = parseInt(stepId, 10);
@@ -432,12 +434,18 @@ exports.startStep = async (req, res) => {
       }
       
       step.start_time = new Date();
+      step.description = description;
       await step.save();
+      if (description) {
+        step.description = description;
+    }
       
       res.status(200).json({
           statusCode: 200,
           message: 'Production step started.',
-          data: step
+          data: step,
+          
+
       });
   } catch (err) {
       res.status(500).json({
@@ -452,6 +460,8 @@ exports.startStep = async (req, res) => {
 // Hold a production step
 exports.holdStep = async (req, res) => {
     const { productionId, stepId } = req.params;
+    const { description } = req.body;
+
     try {
         const step = await ProductionStep.findOne({ where: { id: stepId, productionId } });
         if (!step) {
@@ -470,8 +480,13 @@ exports.holdStep = async (req, res) => {
             });
         }
         
+    
         step.hold_time = new Date();
+        step.description = description;
         await step.save();
+        if (description) {
+          step.description = description;
+      }
         
         res.status(200).json({
             statusCode: 200,
@@ -491,6 +506,8 @@ exports.holdStep = async (req, res) => {
 // Continue a production step
 exports.continueStep = async (req, res) => {
     const { productionId, stepId } = req.params;
+    const { description } = req.body;
+
     try {
         const step = await ProductionStep.findOne({ where: { id: stepId, productionId } });
         if (!step) {
@@ -510,6 +527,7 @@ exports.continueStep = async (req, res) => {
         }
         
         step.resume_time = new Date();
+        step.description = description;
         await step.save();
         
         res.status(200).json({
@@ -530,6 +548,7 @@ exports.continueStep = async (req, res) => {
 // End a production step
 exports.endStep = async (req, res) => {
     const { productionId, stepId } = req.params;
+    const { description } = req.body;
     try {
         const step = await ProductionStep.findOne({ where: { id: stepId, productionId } });
         if (!step) {
@@ -557,12 +576,14 @@ exports.endStep = async (req, res) => {
         }
 
         step.lead_time = leadTime.toFixed(2);
+        step.description = description;
         await step.save();
         
         res.status(200).json({
             statusCode: 200,
             message: 'Production step ended and lead time calculated.',
-            data: step
+            data: step,
+            
         });
     } catch (err) {
         res.status(500).json({
