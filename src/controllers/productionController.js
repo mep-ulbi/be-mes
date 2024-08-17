@@ -374,8 +374,8 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
             },
             include: {
                 model: Production,
-                as: 'production',  // Ensure this alias matches what you've set up in the models
-                attributes: ['kode_produk', 'nama_produk']  // Include the necessary attributes from Production
+                as: 'production',  
+                attributes: ['kode_produk', 'nama_produk']  
             }
         });
 

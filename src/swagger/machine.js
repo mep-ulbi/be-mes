@@ -946,3 +946,124 @@
  *                   type: string
  *                   example: "An error occurred while retrieving the machines."
  */
+
+/**
+ * @swagger
+ * /api/machines/{machineId}/steps/{stepId}:
+ *   get:
+ *     summary: Get a specific machine step by its ID and machine ID
+ *     tags: [MachineSteps]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: machineId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The machine ID
+ *       - in: path
+ *         name: stepId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the machine step
+ *     responses:
+ *       200:
+ *         description: The machine step was successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Machine step retrieved successfully."
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     kode_mesin:
+ *                       type: string
+ *                       example: "MCH123"
+ *                     nama_mesin:
+ *                       type: string
+ *                       example: "Mesin Contoh"
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     step_name:
+ *                       type: string
+ *                       example: "Pemeriksaan Mesin"
+ *                     department:
+ *                       type: string
+ *                       example: "Maintenance"
+ *                     lead_time:
+ *                       type: string
+ *                       example: "12.00"
+ *                     description:
+ *                       type: string
+ *                       example: "Pemeriksaan rutin mesin"
+ *                     start_time:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-08-17T08:44:53.000Z"
+ *                     end_time:
+ *                       type: string
+ *                       format: date-time
+ *                       example: null
+ *                     hold_time:
+ *                       type: string
+ *                       format: date-time
+ *                       example: null
+ *                     resume_time:
+ *                       type: string
+ *                       format: date-time
+ *                       example: null
+ *                     machineId:
+ *                       type: integer
+ *                       example: 1
+ *       400:
+ *         description: Invalid machine ID or step ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid machine ID or step ID. Both must be positive numbers."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     example: []
+ *       404:
+ *         description: Machine step not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "No machine step found for machine ID {machineId} with step ID {stepId}."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     example: []
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *

@@ -227,7 +227,6 @@ exports.getMachineStepByIdAndMachineId = async (req, res) => {
     try {
         console.log(`Received machineId: ${machineId}, id: ${id}`);
 
-        // Convert machineId and id to numbers explicitly
         const numericMachineId = parseInt(machineId, 10);
         const numericId = parseInt(id, 10);
 
@@ -242,11 +241,16 @@ exports.getMachineStepByIdAndMachineId = async (req, res) => {
             });
         }
 
-        // Find the machine step by machineId and id
+        // Fetch the machine step along with its associated machine data
         const step = await MachineStep.findOne({
             where: {
                 machineId: numericMachineId,
                 id: numericId
+            },
+            include: {
+                model: Machine,
+                as: 'machine',  
+                attributes: ['kode_mesin', 'nama_mesin']  
             }
         });
 
@@ -258,10 +262,26 @@ exports.getMachineStepByIdAndMachineId = async (req, res) => {
             });
         }
 
+        // Structure the response with the necessary data
+        const responseData = {
+            kode_mesin: step.machine.kode_mesin, 
+            nama_mesin: step.machine.nama_mesin,
+            id: step.id,
+            step_name: step.step_name,
+            department: step.department,
+            lead_time: step.lead_time,
+            description: step.description,
+            start_time: step.start_time,
+            end_time: step.end_time,
+            hold_time: step.hold_time,
+            resume_time: step.resume_time,
+            machineId: step.machineId,
+        };
+
         res.status(200).json({
             statusCode: 200,
             message: 'Machine step retrieved successfully.',
-            data: step
+            data: responseData
         });
     } catch (err) {
         console.error('Error occurred:', err);
@@ -631,3 +651,5 @@ exports.getMachinesByUser = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+

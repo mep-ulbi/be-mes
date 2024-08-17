@@ -12,7 +12,8 @@ const {
     holdStep,
     continueStep,
     endStep,
-    calculateTotalLeadTime 
+    calculateTotalLeadTime,
+    
 } = require('../controllers/machineController');
 const router = express.Router();
 const verifyToken = require('../middleware/auth');
