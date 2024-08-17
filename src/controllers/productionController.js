@@ -366,10 +366,16 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
             });
         }
 
+        // Fetch the production step along with its associated production data
         const step = await ProductionStep.findOne({
             where: {
                 productionId: numericProductionId,
                 id: numericId
+            },
+            include: {
+                model: Production,
+                as: 'production',  // Ensure this alias matches what you've set up in the models
+                attributes: ['kode_produk', 'nama_produk']  // Include the necessary attributes from Production
             }
         });
 
@@ -381,11 +387,28 @@ exports.getProductionStepByIdAndProductionId = async (req, res) => {
             });
         }
 
+        // Structure the response with the necessary data
+        const responseData = {
+
+            kode_produk: step.production.kode_produk, 
+            nama_produk: step.production.nama_produk,
+            id: step.id,
+            step_name: step.step_name,
+            department: step.department,
+            lead_time: step.lead_time,
+            description: step.description,
+            start_time: step.start_time,
+            end_time: step.end_time,
+            hold_time: step.hold_time,
+            resume_time: step.resume_time,
+            productionId: step.productionId,
+           
+        };
+
         res.status(200).json({
             statusCode: 200,
             message: 'Production step retrieved successfully.',
-            data: step,
-
+            data: responseData
         });
     } catch (err) {
         console.error('Error occurred:', err);

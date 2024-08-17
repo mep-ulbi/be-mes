@@ -1,6 +1,6 @@
 const express = require('express');
 const { createProduction, getProductions, getProductionById, updateProduction, deleteProduction,getProductionStepsByProductionId
-    ,getProductionStepByIdAndProductionId,getProductionsByUser } = require('../controllers/productionController');
+    ,getProductionStepByIdAndProductionId,getProductionsByUser,getProductionWithSteps } = require('../controllers/productionController');
 
     const router = express.Router();
 const verifyToken = require('../middleware/auth');
@@ -14,6 +14,7 @@ router.delete('/productions/:id',verifyToken, deleteProduction);
 router.get('/productions/steps/:productionId',verifyToken,getProductionStepsByProductionId);
 router.get('/productions/:productionId/steps/:stepId',verifyToken ,getProductionStepByIdAndProductionId);
 router.get('/productions/user/:userId', verifyToken,getProductionsByUser);
+
 
 
 module.exports = router;
