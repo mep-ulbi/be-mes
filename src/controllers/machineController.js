@@ -249,12 +249,13 @@ exports.getMachineStepByIdAndMachineId = async (req, res) => {
             },
             include: {
                 model: Machine,
-                as: 'machine',  
-                attributes: ['kode_mesin', 'nama_mesin']  
+                as: 'machine',
+                attributes: ['kode_mesin', 'nama_mesin']
             }
         });
 
         if (!step) {
+            console.log('Machine step not found.');
             return res.status(404).json({
                 statusCode: 404,
                 message: `No machine step found for machine ID ${numericMachineId} with step ID ${numericId}.`,
@@ -264,7 +265,7 @@ exports.getMachineStepByIdAndMachineId = async (req, res) => {
 
         // Structure the response with the necessary data
         const responseData = {
-            kode_mesin: step.machine.kode_mesin, 
+            kode_mesin: step.machine.kode_mesin,
             nama_mesin: step.machine.nama_mesin,
             id: step.id,
             step_name: step.step_name,
@@ -293,6 +294,7 @@ exports.getMachineStepByIdAndMachineId = async (req, res) => {
         });
     }
 };
+
 // Get machine steps by machine ID
 exports.getMachineStepsByMachineId = async (req, res) => {
     const { machineId } = req.params;
