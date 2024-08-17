@@ -23,6 +23,10 @@ const userRoutes = require('./src/routes/userRoutes');
 const productModuleRoutes = require('./src/routes/productModuleRoutes');
 const productDetailRoutes = require('./src/routes/processDetailRoutes');
 const PPICRoutes = require('./src/routes/ppicRoutes');
+const machineDetailRoutes = require('./src/routes/prosesDetailMachineRoutes');
+const machineModuleRoutes = require('./src/routes/machineModuleRoutes');
+
+
 
 
 
@@ -37,6 +41,8 @@ app.use('/api', userRoutes);
 app.use('/api', productModuleRoutes);
 app.use('/api', productDetailRoutes);
 app.use('/api', PPICRoutes);
+app.use('/api', machineDetailRoutes);
+app.use('/api', machineModuleRoutes);
 
 
 swaggerConfig(app);
