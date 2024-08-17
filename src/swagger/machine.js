@@ -946,7 +946,6 @@
  *                   type: string
  *                   example: "An error occurred while retrieving the machines."
  */
-
 /**
  * @swagger
  * /api/machines/{machineId}/steps/{stepId}:
@@ -1066,4 +1065,15 @@
  *         content:
  *           application/json:
  *             schema:
- *
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while retrieving the machine step."
+ *                 error:
+ *                   type: string
+ *                   example: "Detailed error message"
+ */
