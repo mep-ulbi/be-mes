@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 const MachineModule = require('./machineModule');  // Asumsi Anda memiliki model MachineModule
 
-const MachineStep = sequelize.define('MachineStep', {
+const MachineDetail = sequelize.define('MachineDetail', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -54,7 +54,7 @@ const MachineStep = sequelize.define('MachineStep', {
     timestamps: false
 });
 
-MachineModule.hasMany(MachineStep, { foreignKey: 'module_id', as: 'steps' });
-MachineStep.belongsTo(MachineModule, { foreignKey: 'module_id', as: 'module' });
+MachineModule.hasMany(MachineDetail, { foreignKey: 'module_id', as: 'steps' });
+MachineDetail.belongsTo(MachineModule, { foreignKey: 'module_id', as: 'module' });
 
-module.exports = MachineStep;
+module.exports = MachineDetail;

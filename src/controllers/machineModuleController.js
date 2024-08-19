@@ -1,6 +1,7 @@
 const MachineModule = require('../models/machineModule');
 const MachineStep = require('../models/machineStepModel');
 const { sequelize } = require('../config/db');
+const MachineDetail = require('../models/machineDetail');
 
 exports.createModule = async (req, res) => {
     const { machineId, nama_modul, faktor_x } = req.body;
@@ -142,7 +143,7 @@ exports.getModuleById = async (req, res) => {
     try {
         const module = await MachineModule.findByPk(id, {
             include: [{
-                model: MachineStep, 
+                model: MachineDetail, 
                 as: 'steps',
                 limit,
                 offset
@@ -150,7 +151,7 @@ exports.getModuleById = async (req, res) => {
         });
 
         if (module) {
-            const stepsCount = await MachineStep.count({ where: { module_id: id } });
+            const stepsCount = await MachineDetail.count({ where: { module_id: id } });
             const totalPages = Math.ceil(stepsCount / limit);
             const baseUrl = `${req.protocol}://${req.get('host')}${req.originalUrl.split('?')[0]}`;
 
