@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
         const loginCount = loginLogs + 1;
 
         const payload = { id: user.id, role_id: user.role_id };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '23h' });
         const customToken = `${loginCount}|${token}`;
 
         await LoginLog.create({ user_id: user.id, token: customToken });
