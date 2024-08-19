@@ -67,6 +67,7 @@ exports.getAllProductions = async (req, res) => {
             return {
                 productionId: production.id,
                 kode_produk: production.kode_produk,
+                nama_produk: production.nama_produk,
                 total_lead_time: totalLeadTime,
                 dok_production_lead_time: '', 
                 pic_ppc: null, 
