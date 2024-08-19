@@ -144,7 +144,7 @@ exports.getModuleById = async (req, res) => {
         const module = await MachineModule.findByPk(id, {
             include: [{
                 model: MachineDetail, 
-                as: 'steps',
+                as: 'details',
                 limit,
                 offset
             }]
@@ -157,13 +157,13 @@ exports.getModuleById = async (req, res) => {
 
             res.status(200).json({
                 module,
-                steps_pagination: {
+                detail_pagination: {
                     current_page: page,
                     per_page: limit,
                     total: stepsCount,
                     total_pages: totalPages,
                     from: offset + 1,
-                    to: offset + module.steps.length,
+                    to: offset + module.details.length,
                     first_page_url: `${baseUrl}?page=1&limit=${limit}`,
                     last_page_url: `${baseUrl}?page=${totalPages}&limit=${limit}`,
                     prev_page_url: page > 1 ? `${baseUrl}?page=${page - 1}&limit=${limit}` : null,

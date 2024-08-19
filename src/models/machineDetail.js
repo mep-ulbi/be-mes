@@ -50,11 +50,11 @@ const MachineDetail = sequelize.define('MachineDetail', {
         allowNull: false
     }
 }, {
-    tableName: 'machine_steps',
+    tableName: 'machine_details',
     timestamps: false
 });
 
-MachineModule.hasMany(MachineDetail, { foreignKey: 'module_id', as: 'steps' });
+MachineModule.hasMany(MachineDetail, { foreignKey: 'module_id', as: 'details' });
 MachineDetail.belongsTo(MachineModule, { foreignKey: 'module_id', as: 'module' });
 
 module.exports = MachineDetail;
