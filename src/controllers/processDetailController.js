@@ -1,16 +1,18 @@
 const ProcessDetail = require('../models/ProcessDetail');
 const { sequelize } = require('../config/db');
 const ProductModule = require('../models/productModule');
+const ProductionStep = require('../models/productionStepModel')
 
 exports.createDetail = async (req, res) => {
-    const { module_id, nama_proses, waktu_m, output_per_unit, jumlah_kebutuhan_per_unit,process_type ,utilisasi_mesin } = req.body;
+    const { module_id, nama_proses, waktu_m, output_per_unit, jumlah_kebutuhan_per_unit, process_type, utilisasi_mesin, productionId } = req.body;
     const t = await sequelize.transaction();
 
     try {
+        console.log("Received data:", req.body);
 
+        // Membuat detail proses baru
         const waktu_m_per_unit = (waktu_m / output_per_unit) * jumlah_kebutuhan_per_unit;
-
-        const detail = await ProcessDetail.create({
+        const createdDetail = await ProcessDetail.create({
             module_id,
             nama_proses,
             waktu_m,
@@ -19,22 +21,59 @@ exports.createDetail = async (req, res) => {
             process_type,
             utilisasi_mesin,
             waktu_m_per_unit
-
         }, { transaction: t });
+
+        console.log("ProcessDetail created with ID:", createdDetail.id);
+
+        // Menghitung total waktu_m_per_unit untuk semua detail dengan module_id dan productionId yang sama
+        const totalWaktu = await ProcessDetail.sum('waktu_m_per_unit', {
+            include: [{
+                model: ProductModule,
+                as: 'module',
+                where: { id: module_id, productionId },
+                required: true
+            }],
+            transaction: t
+        });
+
+        console.log("Total waktu_m_per_unit:", totalWaktu);
+
+        // Menghitung lead_time baru
+        const newLeadTime = ((totalWaktu / 60) / 7)* 10;;
+        console.log("Calculated new lead time:", newLeadTime);
+
+        // Mencari dan memperbarui ProductionStep yang sesuai
+        const productionStep = await ProductionStep.findOne({
+            where: { productionId, step_name: 'Proses Pekerjaan' },
+            transaction: t
+        });
+
+        if (!productionStep) {
+            await t.rollback();
+            console.log("ProductionStep not found");
+            return res.status(404).json({ error: 'Production step tidak ditemukan.' });
+        }
+
+        productionStep.lead_time = newLeadTime;
+        await productionStep.save({ transaction: t });
+        console.log("ProductionStep lead_time updated to:", newLeadTime);
 
         await t.commit();
         res.status(201).json({
-            message: "Process detail created successfully",
-            detailId: detail.id
+            message: "Process detail created and lead time updated successfully",
+            detailId: productionStep.id,
+            newLeadTime: newLeadTime.toFixed(2) + " days"
         });
     } catch (err) {
+        console.error("Error during transaction:", err);
         await t.rollback();
-        if (err.name === 'SequelizeForeignKeyConstraintError') {
-            return res.status(404).json({ error: 'Maaf data module tidak ditemukan , tidak dapat menambah proses detail modul' });
-        }
         res.status(500).json({ error: err.message });
     }
 };
+
+
+
+
 
 
 
