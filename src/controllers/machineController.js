@@ -61,6 +61,8 @@ exports.createMachine = (req, res) => {
 
             await t.commit();
             res.status(201).json({
+                response_code: 201,
+                data: machine,
                 message: "Machine and steps created successfully",
                 machineId: machine.id,
                 filePath: req.file ? req.file.path : "No file uploaded"
@@ -429,6 +431,7 @@ exports.calculateTotalLeadTime = async (req, res) => {
 // Start a machine step
 exports.startStep = async (req, res) => {
     const { machineId, stepId } = req.params;
+    const { description } = req.body;
     try {
         const numericMachineId = parseInt(machineId, 10);
         const numericStepId = parseInt(stepId, 10);
@@ -459,7 +462,11 @@ exports.startStep = async (req, res) => {
         }
 
         step.start_time = new Date();
+        step.description = description;
         await step.save();
+        if (description) {
+            step.description = description;
+        }
 
         res.status(200).json({
             statusCode: 200,
@@ -479,6 +486,7 @@ exports.startStep = async (req, res) => {
 // Hold a machine step
 exports.holdStep = async (req, res) => {
     const { machineId, stepId } = req.params;
+    const {description} = req.body;
     try {
         const step = await MachineStep.findOne({ where: { id: stepId, machineId } });
         if (!step) {
@@ -498,7 +506,12 @@ exports.holdStep = async (req, res) => {
         }
 
         step.hold_time = new Date();
+        step.description = description;
+
         await step.save();
+        if (description){
+            step.description = description;
+        }
 
         res.status(200).json({
             statusCode: 200,
@@ -518,6 +531,7 @@ exports.holdStep = async (req, res) => {
 // Continue a machine step
 exports.continueStep = async (req, res) => {
     const { machineId, stepId } = req.params;
+    const {description} = req.body
     try {
         const step = await MachineStep.findOne({ where: { id: stepId, machineId } });
         if (!step) {
@@ -537,7 +551,12 @@ exports.continueStep = async (req, res) => {
         }
 
         step.resume_time = new Date();
+        step.description = description;
+
         await step.save();
+        if(description){
+            step.description = description
+        }
 
         res.status(200).json({
             statusCode: 200,
@@ -557,6 +576,7 @@ exports.continueStep = async (req, res) => {
 // End a machine step
 exports.endStep = async (req, res) => {
     const { machineId, stepId } = req.params;
+    const {description} = req.body;
     try {
         const step = await MachineStep.findOne({ where: { id: stepId, machineId } });
         if (!step) {
@@ -576,6 +596,10 @@ exports.endStep = async (req, res) => {
         }
 
         step.end_time = new Date();
+        step.description = description;
+        if(description){
+            step.description = description
+        }
 
         let leadTime = moment(step.end_time).diff(moment(step.start_time), 'hours', true);
 

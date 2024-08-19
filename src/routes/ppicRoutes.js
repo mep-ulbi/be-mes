@@ -1,9 +1,10 @@
 const express = require('express');
-const { getAllProductions } = require('../controllers/ppicController');
+const { getAllProductions, getAllMachines } = require('../controllers/ppicController');
 
 const verifyToken = require('../middleware/auth');
 const router = express.Router();
 
 
 router.get('/productions-summary',verifyToken, getAllProductions);
+router.get('/machine-summary', getAllMachines);
 module.exports = router;
