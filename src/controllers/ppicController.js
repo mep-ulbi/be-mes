@@ -1,5 +1,6 @@
 const Production = require('../models/productionModel');
 const ProductModule = require('../models/productModule');
+const ProductionStep= require('../models/productionStepModel');
 const ProcessDetail = require('../models/ProcessDetail');
 
 
@@ -15,10 +16,13 @@ exports.getAllProductions = async (req, res) => {
     try {
         const { count, rows } = await Production.findAndCountAll({
             include: [{
-                model: ProductModule,
+                model: ProductionStep,
+                as: 'steps', 
+            }, {
+                model: ProductModule, // Include ProductModule jika masih diperlukan
                 as: 'productModules',
                 include: [{
-                    model: ProcessDetail,
+                    model: ProcessDetail, // Include details jika masih diperlukan
                     as: 'details'
                 }]
             }],
@@ -35,40 +39,46 @@ exports.getAllProductions = async (req, res) => {
             let testingMH = 0;
             let testingMCH = 0;
 
-            production.productModules.forEach(module => {
-                // Hitung ASSY MH
-                const assyMHDetails = module.details.filter(detail => detail.process_type === 'ASSY MH');
-                if (assyMHDetails.length > 0) {
-                    const totalWaktuMPerUnit = assyMHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
-                    assyMH += (totalWaktuMPerUnit / 60) * module.faktor_x;
-                }
+            // Hitung total lead time dari ProductionStep
+            if (production.steps && production.steps.length > 0) {
+                production.steps.forEach(step => {
+                    totalLeadTime += parseFloat(step.lead_time) || 0;
+                });
+            }
 
-                // Hitung ASSY MCH
-                const assyMCHDetails = module.details.filter(detail => detail.process_type === 'ASSY MCH');
-                if (assyMCHDetails.length > 0) {
-                    const totalWaktuMPerUnit = assyMCHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
-                    assyMCH += (totalWaktuMPerUnit / 60);  // Tanpa dikali faktor_x
-                }
+            if (production.productModules && production.productModules.length > 0) {
+                production.productModules.forEach(module => {
+                    // Hitung ASSY MH
+                    const assyMHDetails = module.details.filter(detail => detail.process_type === 'ASSY MH');
+                    if (assyMHDetails.length > 0) {
+                        const totalWaktuMPerUnit = assyMHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
+                        assyMH += (totalWaktuMPerUnit / 60) * module.faktor_x;
+                    }
 
-                // Hitung TESTING MH
-                const testingMHDetails = module.details.filter(detail => detail.process_type === 'TESTING MH');
-                if (testingMHDetails.length > 0) {
-                    const totalWaktuMPerUnit = testingMHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
-                    testingMH += (totalWaktuMPerUnit / 60);  // Tanpa dikali faktor_x
-                }
+                    // Hitung ASSY MCH
+                    const assyMCHDetails = module.details.filter(detail => detail.process_type === 'ASSY MCH');
+                    if (assyMCHDetails.length > 0) {
+                        const totalWaktuMPerUnit = assyMCHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
+                        assyMCH += (totalWaktuMPerUnit / 60);  // Tanpa dikali faktor_x
+                    }
 
-                // Hitung TESTING MCH (Dibagi 2 dari testingMH)
-                testingMCH = testingMH / 2;
+                    // Hitung TESTING MH
+                    const testingMHDetails = module.details.filter(detail => detail.process_type === 'TESTING MH');
+                    if (testingMHDetails.length > 0) {
+                        const totalWaktuMPerUnit = testingMHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
+                        testingMH += (totalWaktuMPerUnit / 60);  // Tanpa dikali faktor_x
+                    }
 
-                // Hitung total lead time
-                totalLeadTime += parseFloat(module.lead_time) || 0;
-            });
+                    // Hitung TESTING MCH (Dibagi 2 dari testingMH)
+                    testingMCH = testingMH / 2;
+                });
+            }
 
             return {
                 productionId: production.id,
                 kode_produk: production.kode_produk,
                 nama_produk: production.nama_produk,
-                total_lead_time: totalLeadTime,
+                total_lead_time: totalLeadTime, // Lead time dari ProductionStep
                 dok_production_lead_time: '', 
                 pic_ppc: null, 
                 keterangan: '',
@@ -120,6 +130,7 @@ exports.getAllProductions = async (req, res) => {
         });
     }
 };
+
 
 exports.getAllMachines = async (req, res) => {
     const page = parseInt(req.query.page) || 1;

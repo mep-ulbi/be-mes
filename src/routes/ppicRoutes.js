@@ -5,6 +5,6 @@ const verifyToken = require('../middleware/auth');
 const router = express.Router();
 
 
-router.get('/productions-summary',verifyToken, getAllProductions);
+router.get('/productions-summary', getAllProductions);
 router.get('/machine-summary', getAllMachines);
 module.exports = router;
