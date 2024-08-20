@@ -1,6 +1,7 @@
 const MachineStep = require('../models/machineStepModel');
 const { sequelize } = require('../config/db');
 const MachineModule = require('../models/machineModule');
+const MachineDetail = require('../models/machineDetail');
 
 exports.createMachineDetail = async (req, res) => {
     const { module_id, nama_proses, waktu_m, output_per_unit, jumlah_kebutuhan_per_unit, process_type, utilisasi_mesin } = req.body;
@@ -9,7 +10,7 @@ exports.createMachineDetail = async (req, res) => {
     try {
         const waktu_m_per_unit = (waktu_m / output_per_unit) * jumlah_kebutuhan_per_unit;
 
-        const detail = await MachineStep.create({
+        const detail = await MachineDetail.create({
             module_id,
             nama_proses,
             waktu_m,
