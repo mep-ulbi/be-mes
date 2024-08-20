@@ -7,6 +7,7 @@ const ProcessDetail = require('../models/ProcessDetail');
 const Machine = require('../models/machineModel');
 const MachineModule = require('../models/machineModule');
 const MachineStep = require('../models/machineStepModel');
+const MachineDetail = require('../models/machineDetail');
 
 exports.getAllProductions = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
@@ -19,7 +20,7 @@ exports.getAllProductions = async (req, res) => {
                 model: ProductionStep,
                 as: 'steps', 
             }, {
-                model: ProductModule, // Include ProductModule jika masih diperlukan
+                model: ProductModule, 
                 as: 'productModules',
                 include: [{
                     model: ProcessDetail, // Include details jika masih diperlukan
@@ -131,7 +132,6 @@ exports.getAllProductions = async (req, res) => {
     }
 };
 
-
 exports.getAllMachines = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -140,11 +140,14 @@ exports.getAllMachines = async (req, res) => {
     try {
         const { count, rows } = await Machine.findAndCountAll({
             include: [{
-                model: MachineModule,
-                as: 'machineModules',  // pastikan ini sesuai dengan alias di asosiasi
+                model: MachineStep,
+                as: 'steps', 
+            }, {
+                model: MachineModule, // Include MachineModule jika masih diperlukan
+                as: 'machineModules',
                 include: [{
-                    model: MachineStep,
-                    as: 'steps'  // pastikan ini sesuai dengan alias di asosiasi
+                    model: MachineDetail, // Include details jika masih diperlukan
+                    as: 'details'
                 }]
             }],
             limit,
@@ -153,7 +156,6 @@ exports.getAllMachines = async (req, res) => {
 
         const totalPages = Math.ceil(count / limit);
 
-        // Mapping data ke format yang diinginkan
         const machineData = rows.map(machine => {
             let totalLeadTime = 0;
             let assyMH = 0;
@@ -161,39 +163,45 @@ exports.getAllMachines = async (req, res) => {
             let testingMH = 0;
             let testingMCH = 0;
 
-            machine.machineModules.forEach(module => {
-                // Hitung ASSY MH
-                const assyMHDetails = module.steps.filter(step => step.process_type === 'ASSY MH');
-                if (assyMHDetails.length > 0) {
-                    const totalWaktuMPerUnit = assyMHDetails.reduce((sum, step) => sum + step.waktu_m_per_unit, 0);
-                    assyMH += (totalWaktuMPerUnit / 60) * module.faktor_x;
-                }
+            // Hitung total lead time dari MachineStep
+            if (machine.steps && machine.steps.length > 0) {
+                machine.steps.forEach(step => {
+                    totalLeadTime += parseFloat(step.lead_time) || 0;
+                });
+            }
 
-                // Hitung ASSY MCH
-                const assyMCHDetails = module.steps.filter(step => step.process_type === 'ASSY MCH');
-                if (assyMCHDetails.length > 0) {
-                    const totalWaktuMPerUnit = assyMCHDetails.reduce((sum, step) => sum + step.waktu_m_per_unit, 0);
-                    assyMCH += (totalWaktuMPerUnit / 60);
-                }
+            if (machine.machineModules && machine.machineModules.length > 0) {
+                machine.machineModules.forEach(module => {
+                    // Hitung ASSY MH
+                    const assyMHDetails = module.details.filter(detail => detail.process_type === 'ASSY MH');
+                    if (assyMHDetails.length > 0) {
+                        const totalWaktuMPerUnit = assyMHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
+                        assyMH += (totalWaktuMPerUnit / 60) * module.faktor_x;
+                    }
 
-                // Hitung TESTING MH
-                const testingMHDetails = module.steps.filter(step => step.process_type === 'TESTING MH');
-                if (testingMHDetails.length > 0) {
-                    const totalWaktuMPerUnit = testingMHDetails.reduce((sum, step) => sum + step.waktu_m_per_unit, 0);
-                    testingMH += (totalWaktuMPerUnit / 60);
-                }
+                    // Hitung ASSY MCH
+                    const assyMCHDetails = module.details.filter(detail => detail.process_type === 'ASSY MCH');
+                    if (assyMCHDetails.length > 0) {
+                        const totalWaktuMPerUnit = assyMCHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
+                        assyMCH += (totalWaktuMPerUnit / 60);  // Tanpa dikali faktor_x
+                    }
 
-                // Hitung TESTING MCH (Dibagi 2 dari testingMH)
-                testingMCH = testingMH / 2;
+                    // Hitung TESTING MH
+                    const testingMHDetails = module.details.filter(detail => detail.process_type === 'TESTING MH');
+                    if (testingMHDetails.length > 0) {
+                        const totalWaktuMPerUnit = testingMHDetails.reduce((sum, detail) => sum + detail.waktu_m_per_unit, 0);
+                        testingMH += (totalWaktuMPerUnit / 60);  // Tanpa dikali faktor_x
+                    }
 
-                // Hitung total lead time
-                totalLeadTime += parseFloat(module.lead_time) || 0;
-            });
+                    // Hitung TESTING MCH (Dibagi 2 dari testingMH)
+                    testingMCH = testingMH / 2;
+                });
+            }
 
             return {
                 machineId: machine.id,
                 kode_mesin: machine.kode_mesin,
-                total_lead_time: totalLeadTime,
+                total_lead_time: totalLeadTime, // Lead time dari MachineStep
                 dok_production_lead_time: '', 
                 pic_ppc: null, 
                 keterangan: '',
